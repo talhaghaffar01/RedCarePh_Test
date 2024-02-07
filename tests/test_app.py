@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from src.app import app
+from app import app
 
 class TestApp(unittest.TestCase):
 

@@ -12,6 +12,13 @@ fetcher = DataFetcher('data/raw')
 processor = DataProcessor('data/raw', 'data/processed')
 data_lake = DataLake('data')
 
+@app.route('/', methods=['GET'])
+def check_status():
+    """
+    Check if the application is up.
+    """
+    return jsonify({'message': 'Application is up!'}), 200
+
 @app.route('/fetch-data', methods=['POST'])
 def fetch_data():
     """
