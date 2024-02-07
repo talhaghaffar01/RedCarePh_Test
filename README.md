@@ -89,14 +89,14 @@ print(process_data_response.json())
 ### Store Data to DataLake
 ```python
 import requests
-
-url = 'http://localhost:5000/dlake-json'
+url = 'http://localhost:5000/store-data'
 headers = {
-    'Authorization': 'token'  # Replace token_here with the token from the Dockerfile
+    'Authorization': 'abc123', # Replace token_here with the token from the Dockerfile
+    'Content-Type': 'application/json'
 }
-response = requests.get(url, headers=headers)
-print(response.status_code)
-print(response.json())
+response = requests.post(url, headers=headers)
+print('Response status code:', response.status_code)
+print('Response content:', response.json())
 ```
 
 ### View Data in Datalake
