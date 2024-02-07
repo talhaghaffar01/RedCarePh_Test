@@ -3,6 +3,7 @@ from src.data_fetch import DataFetcher
 from src.data_processing import DataProcessor
 from src.data_lake import DataLake
 import os
+import json
 
 app = Flask(__name__)
 
@@ -70,6 +71,22 @@ def store_data():
         return jsonify({'message': 'Data stored successfully'}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+    
+@app.route('/dlake-json', methods=['GET'])
+def get_dlake_json():
+    """
+    Returns the JSON data present in data/dlake/dlake.json.
+
+    Returns:
+        JSON response containing the data from dlake.json or an error message if the file is not found.
+    """
+    dlake_json_file = os.path.join('data', 'dlake', 'dlake.json')
+    if os.path.exists(dlake_json_file):
+        with open(dlake_json_file, 'r') as f:
+            dlake_data = json.load(f)
+        return jsonify(dlake_data), 200
+    else:
+        return jsonify({'message': 'No result found'}), 404
 
 
 if __name__ == '__main__':
