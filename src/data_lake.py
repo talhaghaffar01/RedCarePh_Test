@@ -1,11 +1,15 @@
 import os
-import shutil
 import json
-
 from datetime import datetime
 
 class DataLake:
     def __init__(self, base_directory):
+        """
+        Initializes the DataLake object.
+
+        Args:
+            base_directory (str): The base directory for the data lake.
+        """
         self.base_directory = base_directory
         self.dlake_directory = os.path.join(self.base_directory, 'dlake')
 
@@ -13,26 +17,25 @@ class DataLake:
         os.makedirs(self.dlake_directory, exist_ok=True)
 
     def check_and_update_dlake_json(self):
+        """
+        Checks for updates in the processed data and updates the data lake JSON file accordingly.
+        """
         try:
             dlake_json_file = os.path.join(self.dlake_directory, 'dlake.json')
             processed_data_file = os.path.join(self.base_directory, 'processed', 'processed_raw_data.json')
 
-            # Check if dlake directory exists, create if not
             if not os.path.exists(self.dlake_directory):
                 self.create_dlake_directory()
 
-            # Load existing data from dlake.json if it exists
             if os.path.exists(dlake_json_file):
                 with open(dlake_json_file, 'r') as f:
                     existing_data = json.load(f)
             else:
                 existing_data = []
 
-            # Load data from processed data file
             with open(processed_data_file, 'r') as f:
                 processed_data = json.load(f)
 
-            # Append new entries from processed data to existing_data if they are not already present
             for entry in processed_data:
                 sponsor_name = entry['sponsor_name']
                 products = entry['products']

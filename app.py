@@ -1,17 +1,43 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from src.data_fetch import DataFetcher
 from src.data_processing import DataProcessor
 from src.data_lake import DataLake
 import os
+import json
+from functools import wraps
+
 
 app = Flask(__name__)
 
-
+# Initialize your fetcher, processor, and data lake objects
 fetcher = DataFetcher('data/raw')
 processor = DataProcessor('data/raw', 'data/processed')
 data_lake = DataLake('data')
 
+# Define your secret token (you can retrieve this from environment variables in production)
+# SECRET_TOKEN = "your_secret_token" (for local testing)
+SECRET_TOKEN = os.getenv('SECRET_TOKEN')
+
+def authenticate(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if request.headers.get('Authorization') != SECRET_TOKEN:
+            return jsonify({'message': 'Authentication failed'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+# Route to check the status of the application
+@app.route('/', methods=['GET'])
+def check_status():
+    """
+    Check if the application is up.
+    """
+    return jsonify({'message': 'Application is up!'}), 200
+
+# Route to fetch data
 @app.route('/fetch-data', methods=['POST'])
+@authenticate
 def fetch_data():
     """
     Fetches data from a specified data source URL.
@@ -33,7 +59,9 @@ def fetch_data():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
+# Route to process data
 @app.route('/process-data', methods=['POST'])
+@authenticate
 def process_data():
     """
     Processes the fetched data.
@@ -55,7 +83,9 @@ def process_data():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
+# Route to store data
 @app.route('/store-data', methods=['POST'])
+@authenticate
 def store_data():
     """
     Stores the processed data.
@@ -71,6 +101,23 @@ def store_data():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
+# Route to get dlake.json data
+@app.route('/dlake-json', methods=['GET'])
+@authenticate
+def get_dlake_json():
+    """
+    Returns the JSON data present in data/dlake/dlake.json.
+
+    Returns:
+        JSON response containing the data from dlake.json or an error message if the file is not found.
+    """
+    dlake_json_file = os.path.join('data', 'dlake', 'dlake.json')
+    if os.path.exists(dlake_json_file):
+        with open(dlake_json_file, 'r') as f:
+            dlake_data = json.load(f)
+        return jsonify(dlake_data), 200
+    else:
+        return jsonify({'message': 'No result found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
