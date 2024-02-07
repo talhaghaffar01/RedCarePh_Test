@@ -8,7 +8,6 @@ import shutil
 
 class TestDataLake(unittest.TestCase):
     def setUp(self):
-        # Set up test directories and create a sample processed data file
         self.base_directory = 'test_data_lake'
         self.processed_directory = os.path.join(self.base_directory, 'processed')
         os.makedirs(self.processed_directory, exist_ok=True)
@@ -32,7 +31,6 @@ class TestDataLake(unittest.TestCase):
 
     @patch('src.data_lake.datetime')
     def test_check_and_update_dlake_json(self, mock_datetime):
-        # Test the method to check and update dlake.json file
         mock_datetime.now.return_value = datetime(2023, 1, 1)
         data_lake = DataLake(self.base_directory)
         data_lake.check_and_update_dlake_json()
@@ -52,7 +50,6 @@ class TestDataLake(unittest.TestCase):
         self.assertEqual(updated_data, expected_data)
 
     def tearDown(self):
-        # Clean up test directories and files after testing
         shutil.rmtree(self.base_directory)
 
 if __name__ == '__main__':
