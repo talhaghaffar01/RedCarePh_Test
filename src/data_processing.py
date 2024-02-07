@@ -31,13 +31,25 @@ class DataProcessor:
             print(f"An error occurred during data processing: {str(e)}")
             return None
 
-    def _process_json_data(self, raw_data: Dict[str, Any]) -> List[ProcessedData]:
+    def _process_json_data(self, raw_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         processed_data = []
         for result in raw_data.get('results', []):
-            processed_result = ProcessedData(
-                application_number=result.get('application_number', ''),
-                sponsor_name=result.get('sponsor_name', ''),
-                products=[Product(**product) for product in result.get('products', [])]
-            )
-            processed_data.append(processed_result.dict())  # Convert to dict before appending
+            processed_result = {
+                "application_number": result.get('application_number', ''),
+                "sponsor_name": result.get('sponsor_name', ''),
+                "products": [
+                    {
+                        "product_number": product.get('product_number', ''),
+                        "reference_drug": product.get('reference_drug', ''),
+                        "brand_name": product.get('brand_name', ''),
+                        "active_ingredients": product.get('active_ingredients', []),
+                        "reference_standard": product.get('reference_standard', ''),
+                        "dosage_form": product.get('dosage_form', ''),
+                        "route": product.get('route', ''),
+                        "marketing_status": product.get('marketing_status', '')
+                    }
+                    for product in result.get('products', [])
+                ]
+            }
+            processed_data.append(processed_result)
         return processed_data

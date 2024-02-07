@@ -1,10 +1,13 @@
 import requests
 import os
+from requests import Session
+from requests_cache import CachedSession
 
 class DataFetcher:
-    def __init__(self, save_directory):
+    def __init__(self, save_directory="data/raw"):
         self.save_directory = save_directory
-    
+        self.session = CachedSession()  # Enable connection pooling
+
     def fetch_data(self, data_source_url):
         """
         Fetch data from the specified URL and save it to the save_directory.
@@ -18,8 +21,8 @@ class DataFetcher:
         """
         try:
             os.makedirs(self.save_directory, exist_ok=True)
-            
-            response = requests.get(data_source_url)
+
+            response = self.session.get(data_source_url)  # Use CachedSession for requests
             if response.status_code == 200:
                 filename = 'raw_data.json'
                 filepath = os.path.join(self.save_directory, filename)
