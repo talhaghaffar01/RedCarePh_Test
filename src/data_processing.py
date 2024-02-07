@@ -5,10 +5,26 @@ import os
 
 class DataProcessor:
     def __init__(self, input_directory, output_directory):
+        """
+        Initializes the DataProcessor object.
+
+        Args:
+            input_directory (str): The directory containing the input data files.
+            output_directory (str): The directory where processed data will be saved.
+        """
         self.input_directory = input_directory
         self.output_directory = output_directory
 
     def process_data(self, filename):
+        """
+        Processes the data from the input file and saves the processed data to the output directory.
+
+        Args:
+            filename (str): The name of the input file to process.
+
+        Returns:
+            str or None: The filepath where the processed data is saved, or None if the operation fails.
+        """
         try:
             if not os.path.exists(self.output_directory):
                 os.makedirs(self.output_directory)
@@ -32,6 +48,15 @@ class DataProcessor:
             return None
 
     def _process_json_data(self, raw_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Processes the raw JSON data into a structured format.
+
+        Args:
+            raw_data (Dict[str, Any]): The raw JSON data to process.
+
+        Returns:
+            List[Dict[str, Any]]: The processed data in a structured format.
+        """
         processed_data = []
         for result in raw_data.get('results', []):
             processed_result = {
