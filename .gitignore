@@ -8,3 +8,7 @@ htmlcov/
 docs/_build/
 dist/
 env/
+http_cache.sqlite
+cache
+dlake_cache
+data
