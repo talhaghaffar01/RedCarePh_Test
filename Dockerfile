@@ -1,17 +1,12 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9
+# syntax=docker/dockerfile:1
 
-# Set the working directory in the container
-WORKDIR /app
+FROM python:3.8-slim-buster
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+WORKDIR /python-docker
 
-# Install any needed dependencies specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
-# Expose the port the app runs on
-EXPOSE 5000
+COPY . .
 
-# Run the Flask application
-CMD ["python", "-m", "src.app"]
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
